@@ -7,10 +7,9 @@ from .forms import Taskform
 from django.http import HttpResponse
 # Create your views here.
 
-def teamMembers(request):
+def teamMembers(request,project):
     members={}
-    managerObj=list(Managers.objects.filter(manager=request.user.id).select_related("project"))
-    project=managerObj[0].project.id
+    members[request.user.id]=request.user.first_name+" "+request.user.last_name
     teamMembers=list(Projectteams.objects.filter(project=project).select_related("member"))
     for member in teamMembers:
         members[member.member.id]=member.member.first_name+" "+member.member.last_name
@@ -25,9 +24,10 @@ def projectsDict(request):
             projects[object.project.id]=object.project.name
         return projects
     else:
-        project={}
+        projects={}
         managerObj=list(Managers.objects.filter(manager=request.user.id).select_related("project"))
-        project[managerObj[0].project.id]=managerObj[0].project.name
+        projects[managerObj[0].project.id]=managerObj[0].project.name
+        return projects
 
 
 def loginUser(request):
@@ -37,6 +37,9 @@ def loginUser(request):
             login(request,form.get_user())
             projects=projectsDict(request)
             request.session["projects"]=projects
+            if(request.user.role=="PM"):
+                members=teamMembers(request,list(projects.keys())[0])
+                request.session["members"]=members
             return redirect("/viewTasks/")
         else:
             error=form.errors.as_text()
@@ -52,7 +55,7 @@ def createtask(request):
                 form.save()
                 return redirect("/viewTasks/")
             else:
-                return HttpResponse(form.errors.as_json())
+                return render(request,"members/createTask.html",{"projects":request.session["projects"],"errors":form.errors.as_text()})
         return render(request,"members/createTask.html",{"projects":request.session["projects"]})
     else:
         if request.method=="POST":
@@ -61,8 +64,8 @@ def createtask(request):
                 form.save()
                 return redirect("/viewTasks/")
             else:
-                return HttpResponse(form.errors.as_json())
-        return render(request,"manager/createTask.html",{"projects":request.session["projects"]})
+                return render(request,"manager/createTask.html",{"project":list(request.session["projects"].keys())[0],"errors":form.errors.as_text()})
+        return render(request,"manager/createTask.html",{"project":list(request.session["projects"].keys())[0]})
 
 
 @login_required(login_url="/login")
@@ -84,7 +87,41 @@ def viewTasks(request):
         return render(request,"members/viewTasks.html",{"tasks":tasks,"projects":request.session["projects"]})
     else:
         tasks=list(Tasks.objects.filter(user=request.user.id).select_related("project"))
-        return render(request,"manager/viewTasks.html",{"tasks":tasks,"projects":request.session["projects"]})
+        return render(request,"manager/viewTasks.html",{"tasks":tasks,"projects":request.session["projects"],"members":request.session["members"]})
+    
+@login_required(login_url="/login")
+def memebersTasks(request):
+    if request.user.role=="PM":
+        if request.method=="POST":
+            date=request.POST["date"]
+            project=list(request.session["projects"].keys())[0]
+            if date:
+                tasks=Tasks.objects.filter(date=date,project=project).select_related("user")
+            else:
+                tasks=Tasks.objects.filter(project=project).select_related("user")
+        else:
+            project=list(request.session["projects"].keys())[0]
+            tasks=Tasks.objects.filter(project=project).select_related("user")
+        return render(request,"manager/membersTasks.html",{"tasks":tasks,"projects":request.session["projects"],"members":request.session["members"]})
+    else:
+        return redirect("/viewTasks")
+    
+@login_required(login_url="/login")
+def memberTasks(request,userid):
+    if request.user.role=="PM":
+        if request.method=="POST":
+            date=request.POST["date"]
+            project=list(request.session["projects"].keys())[0]
+            if date:
+                tasks=Tasks.objects.filter(user=userid,date=date,project=project).select_related("user")
+            else:
+                tasks=Tasks.objects.filter(user=userid,project=project).select_related("user")
+        else:
+            project=list(request.session["projects"].keys())[0]
+            tasks=list(Tasks.objects.filter(user=userid,project=project).select_related("user"))
+        return render(request,"manager/membersTasks.html",{"tasks":tasks,"projects":request.session["projects"],"members":request.session["members"]})
+    else:
+        return redirect("/viewTasks")
 
 @login_required(login_url="/login")
 def logoutUser(request):

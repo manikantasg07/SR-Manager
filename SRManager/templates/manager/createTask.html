@@ -75,6 +75,7 @@
                     <form action="/createTask/" enctype="multipart/form-data" method="post" id="contactFrm" name="contactFrm">
                         {% csrf_token %}
                         <input type="hidden" name="user" value="{{request.user.id}}">
+                        <input type="hidden" name="project" value="{{project}}">
                         <input type="date"  name="date" class="txt" required>
                         <textarea placeholder="Report" name="taskDescription" type="text" class="txt_3" required></textarea>
                         <select name="status" class="txt2" required>
@@ -93,3 +94,9 @@
         </div>
     </div>
 </body>
+<script>
+    if ("{{errors}}"!=""){
+        console.log("{{errors}}")
+        alert("{{errors}}")
+    }
+</script>

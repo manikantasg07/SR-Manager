@@ -30,8 +30,8 @@ class Tasks(models.Model):
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now())
     taskDescription = models.TextField(default="Custom Description")
-    accomplishments=models.TextField(default="Custom Accomplishment",blank=True)
-    blockers=models.TextField(default="Custom Blockers",blank=True)
+    accomplishments=models.TextField(blank=True)
+    blockers=models.TextField(blank=True)
     document=models.FileField(blank=True)
     status = models.CharField(max_length=10, choices=STATUS, default="start")
 

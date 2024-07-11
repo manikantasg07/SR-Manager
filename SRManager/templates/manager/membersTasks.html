@@ -16,13 +16,8 @@
             }
     </style>
 </head>
-
 <div class="container">
-    {% comment %} <form id="form" action="/viewTasks/" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="date" name="date" >
-        <button type="submit">Apply Filter</button>
-    </form> {% endcomment %}
+    
     <div class="row col-md-6 col-md-offset-2 custyle">
     <h3>Project</h3>
     <h4>
@@ -30,25 +25,32 @@
         {{value}}
         {% endfor %}
     </h4>
-    <br>
-    <h3>My reports</h3>
-    <br>
+    <h4>Project Members</h4>
+    <ul>
+        <li><a href="/viewMembersTasks/">All</a></li>
+        {% for key,value in members.items %}
+            <li><a href="/viewMemberTasks/{{key}}/">{{value}}</a></li>
+        {% endfor %}
+    </ul>
+    <form id="form" action="{{request.path}}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="date" name="date">
+        <button type="submit">Apply Filter</button>
+    </form>
     {%if tasks %}
     <table class="table table-striped custab">
     <thead>
-    {% comment %} <a href="#" class="btn btn-primary btn-xs pull-right"><b>+</b> Add new categories</a> {% endcomment %}
         <tr>
-            <th>Project</th>
+            <th>Employee</th>
             <th>Date</th>
             <th>Report</th>
             <th>Accomplishments</th>
             <th>Concerns/Blockers</th>
-            {% comment %} <th class="text-center">Action</th> {% endcomment %}
         </tr>
     </thead>
             {% for task in tasks%}
             <tr>
-                <td>{{task.project.name}}</td>
+                <td>{{task.user.first_name}} {{task.user.last_name}}</td>
                 <td>{{task.date}}</td>
                 <td>{{task.taskDescription}}</td>
                 <td>{{task.accomplishments}}</td>
