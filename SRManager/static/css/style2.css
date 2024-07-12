@@ -63,7 +63,7 @@ body {
     flex: 1;
 }
 .employee-list {
-    width: 0;
+    width: 200px;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -72,6 +72,8 @@ body {
     flex-grow: 1;
     margin-top: 70px;
     padding-top: 80px;
+    max-width: 200px !important;
+    min-width: 200px !important;
 }
 .employee-list a {
     display: block;

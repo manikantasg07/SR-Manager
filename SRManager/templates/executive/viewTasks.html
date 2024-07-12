@@ -32,7 +32,7 @@
             {% endfor %}
         </div>
 
-        <div class="content">
+        <div class="content" style="margin-left: 0;">
             <div class="form-container">
                     <form id="form" action="{{request.path}}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
