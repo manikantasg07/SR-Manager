@@ -6,5 +6,7 @@ urlpatterns = [
     path("viewTasks/",views.viewTasks,name="viewTasks"),
     path("viewMembersTasks/",views.memebersTasks,name="membersTasks"),
     path("viewMemberTasks/<int:userid>/",views.memberTasks,name="memberTasks"),
+    path("executive/",views.executive,name="executive"),
+    path("executiveMemberTasks/<int:userid>/",views.executiveMemberTasks,name="executiveMemberTasks"),
     path("logout/",views.logoutUser,name="logout")
 ]

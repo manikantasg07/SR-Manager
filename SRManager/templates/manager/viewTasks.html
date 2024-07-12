@@ -1,67 +1,55 @@
-<head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <style>
-        .custab{
-            border: 1px solid #ccc;
-            padding: 5px;
-            margin: 5% 0;
-            box-shadow: 3px 3px 2px #ccc;
-            transition: 0.5s;
-            }
-        .custab:hover{
-            box-shadow: 3px 3px 0px transparent;
-            transition: 0.5s;
-            }
-    </style>
-</head>
-
-<div class="container">
-    {% comment %} <form id="form" action="/viewTasks/" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="date" name="date" >
-        <button type="submit">Apply Filter</button>
-    </form> {% endcomment %}
-    <div class="row col-md-6 col-md-offset-2 custyle">
-    <h3>Project</h3>
-    <h4>
-        {% for key,value in projects.items %}
-        {{value}}
-        {% endfor %}
-    </h4>
-    <br>
-    <h3>My reports</h3>
-    <br>
-    {%if tasks %}
-    <table class="table table-striped custab">
-    <thead>
-    {% comment %} <a href="#" class="btn btn-primary btn-xs pull-right"><b>+</b> Add new categories</a> {% endcomment %}
-        <tr>
-            <th>Project</th>
-            <th>Date</th>
-            <th>Report</th>
-            <th>Accomplishments</th>
-            <th>Concerns/Blockers</th>
-            {% comment %} <th class="text-center">Action</th> {% endcomment %}
-        </tr>
-    </thead>
-            {% for task in tasks%}
+{% extends "layout.html" %}
+{% block main %}
+<div class="form-container">
+    <h3>Reports</h3>
+    <form id="form" action="/viewTasks/" method="post" enctype="multipart/form-data">
+        <div class="form-group-inline">
+            {% csrf_token %}
+            <div class="form-item">
+                <label for="project">Project:</label>
+                <select name="project" class="project">
+                    {% comment %} <option value="">Select a Project</option> {% endcomment %}
+                    {% for key, value in projects.items %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-item">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" >
+            </div>
+            <div class="form-item button-item">
+                <button type="submit">Apply Filter</button>
+            </div>
+    </div>
+    </form>
+    {% if tasks %}
+    <table>
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Date</th>
+                <th>Task Description</th>
+                <th>Accomplishments</th>
+                <th>Concerns/Blockers</th>
+                <th>Files</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
             <tr>
                 <td>{{task.project.name}}</td>
                 <td>{{task.date}}</td>
                 <td>{{task.taskDescription}}</td>
                 <td>{{task.accomplishments}}</td>
                 <td>{{task.blockers}}</td>
-                {% comment %} <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span class="glyphicon glyphicon-edit"></span> Edit</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Del</a></td> {% endcomment %}
+                <td>{{task.document}}</td>
             </tr>
-            {% endfor %}
+            {%endfor%}
+        </tbody>
     </table>
-    {%else%}
-    <h4>No reports</h4>
+    {% else %}
+    <p><b>No Reports</b></p>
     {% endif %}
-    </div>
 </div>
-<script>
-
-</script>
+{% endblock %}

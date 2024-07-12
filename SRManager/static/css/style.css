@@ -4,6 +4,7 @@ body {
     padding: 0;
     display: flex;
     min-height: 100vh;
+    background-color: #FFF7E5;
     flex-direction: column;
   }
   
@@ -11,6 +12,7 @@ body {
     max-width: 1024px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #FFF7E5
   }
   
   .header, .footer {
@@ -35,6 +37,7 @@ body {
   
   .main {
     flex: 1; /* main content takes up remaining space */
+    background-color: #FFF7E5
   }
   
   .card-login{

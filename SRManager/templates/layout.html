@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+ {% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Report</title>
+    <link rel="stylesheet" href="{% static "css/style1.css" %}">
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h2 id="employee-name">{{request.user.first_name}} {{request.user.last_name}}</h2>
+        </div>
+        <div class="header-middle">
+            <h2>International Software Systems, Inc.<br>Status Report Manager</h2>
+        </div>
+        <div class="header-right">
+            <a href="/logout/" id="logout">Logout</a>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="sidebar">
+            <a href="/viewTasks/">View</a>  
+            <a href="/createTask/">Create</a> 
+            {% if request.user.role == "PM" %}
+            <a href="/viewMembersTasks/">Project Reports</a>
+            {% endif %}
+        </div>
+        {% block listcontent%}
+        {% endblock %}
+        <div class="content">
+            {% block main %}
+            {% endblock%}
+        </div>
+    </div>
+</body>
+</html>

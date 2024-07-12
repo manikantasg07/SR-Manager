@@ -21,26 +21,27 @@
     </div>
     
     <div class="main-content">
-        <div class="sidebar">
-            <a href="/viewTasks/">View</a>  
-            <a href="/createTask/">Create</a>  
-            <a href="/viewMembersTasks/">Project Reports</a>
+        <div class="sidebar"> 
+            <a href="/executive/">Projects Reports</a>
         </div>
 
         <div class="employee-list">
-            <a href="/viewMembersTasks/">All Members</a>
-            {% for key,value in members.items %}
-                <a href="/viewMemberTasks/{{key}}/">{{value}}</a>
+            <a href="/executive/">All Members</a>
+            {% for key,value in employees.items %}
+                <a href="/executiveMemberTasks/{{key}}/">{{value}}</a>
             {% endfor %}
         </div>
 
         <div class="content">
             <div class="form-container">
-                <h3>{% for key,value in projects.items %}
-                    {{value}}
-                    {% endfor %}</h3>
                     <form id="form" action="{{request.path}}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
+                        <select name="project" id="project">
+                            <option value="">Select a Project</option>
+                            {% for key,value in projects.items %}
+                                <option value="{{key}}">{{value}}</option>
+                            {% endfor %}
+                        </select>
                         <input type="date" name="date">
                         <button type="submit">Apply Filter</button>
                     </form>
@@ -49,6 +50,7 @@
                     <tr>
                         <th>Employee</th>
                         <th>Date</th>
+                        <th>Project</th>
                         <th>Report</th>
                         <th>Accomplishments</th>
                         <th>Concerns/Blockers</th>
@@ -58,9 +60,11 @@
                         <tr>
                             <td>{{task.user.first_name}} {{task.user.last_name}}</td>
                             <td>{{task.date}}</td>
+                            <td>{{task.project.name}}</td>
                             <td>{{task.taskDescription}}</td>
                             <td>{{task.accomplishments}}</td>
                             <td>{{task.blockers}}</td>
+                            <td></td>
                             {% comment %} <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span class="glyphicon glyphicon-edit"></span> Edit</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Del</a></td> {% endcomment %}
                         </tr>
                     {% endfor %}
