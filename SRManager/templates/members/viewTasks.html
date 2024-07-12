@@ -43,7 +43,7 @@
                 <td>{{task.taskDescription}}</td>
                 <td>{{task.accomplishments}}</td>
                 <td>{{task.blockers}}</td>
-                <td>{{task.document}}</td>
+                <td><a href="/files/{{task.document}}">{{task.document}}</a></td>
             </tr>
             {%endfor%}
         </tbody>

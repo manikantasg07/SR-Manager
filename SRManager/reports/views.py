@@ -6,6 +6,7 @@ from .models import Tasks,Managers,Projectteams,Projects,CustomUser
 from .forms import Taskform
 from django.http import HttpResponse
 from django.db.models import Q
+from datetime import datetime, date
 # Create your views here.
 
 def teamMembers(request,project):
@@ -61,7 +62,7 @@ def loginUser(request):
                 request.session["members"]=members
             return redirect("/viewTasks/")
         else:
-            error=form.errors.as_text()
+            error=form.errors
             return render(request,"login.html",{"error":error})
     if request.user.is_authenticated:
         if request.user.role=="SA":
@@ -71,25 +72,34 @@ def loginUser(request):
 
 @login_required(login_url="/login")
 def createtask(request):
-    if request.user.role=="ME":
-        if request.method=="POST":
-            form=Taskform(request.POST,request.FILES)
-            if form.is_valid():
-                form.save()
-                return redirect("/viewTasks/")
-            else:
-                return render(request,"members/createTask.html",{"projects":request.session["projects"],"errors":form.errors.as_text()})
-        return render(request,"members/createTask.html",{"projects":request.session["projects"]})
-   
-    else:
-        if request.method=="POST":
-            form=Taskform(request.POST,request.FILES)
-            if form.is_valid():
-                form.save()
-                return redirect("/viewTasks/")
-            else:
-                return render(request,"manager/createTask.html",{"project":list(request.session["projects"].keys())[0],"errors":form.errors.as_text()})
-        return render(request,"manager/createTask.html",{"project":request.session["projects"]})
+    try:
+        try:
+            if date.today()<datetime.strptime(request.POST["date"],'%Y-%m-%d').date():
+                return render(request, "members/createTask.html",
+                              {"projects": request.session["projects"], "errors": "Sorry you cannot add Task for a future date..<br> Please try with todays date..!"})
+        except:
+            pass
+        if request.user.role=="ME":
+            if request.method=="POST":
+                form=Taskform(request.POST,request.FILES)
+                if form.is_valid():
+                    form.save()
+                    return redirect("/viewTasks/")
+                else:
+                    return render(request,"members/createTask.html",{"projects":request.session["projects"],"errors":form.errors})
+            return render(request,"members/createTask.html",{"projects":request.session["projects"]})
+
+        else:
+            if request.method=="POST":
+                form=Taskform(request.POST,request.FILES)
+                if form.is_valid():
+                    form.save()
+                    return redirect("/viewTasks/")
+                else:
+                    return render(request,"manager/createTask.html",{"project":list(request.session["projects"].keys())[0],"errors":form.errors})
+            return render(request,"manager/createTask.html",{"project":request.session["projects"]})
+    except Exception as e:
+        return render(request, "members/createTask.html",{"projects": request.session["projects"], "errors":e})
 
 
 @login_required(login_url="/login")

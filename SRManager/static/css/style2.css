@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #FFF7E5;
+    /*background-color: #FFF7E5;*/
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -16,6 +16,7 @@ body {
     align-items: center;
     width: 100%;
     box-sizing: border-box;
+    position: fixed;
 }
 .header-left {
     flex: 1;
@@ -38,7 +39,7 @@ body {
     background-color: #f4f4f4;
     position: fixed;
     left: 0;
-    top: 115px;
+    top: 117px;
     bottom: 0;
     height: calc(100vh - 0px); 
     box-sizing: border-box;
@@ -62,11 +63,15 @@ body {
     flex: 1;
 }
 .employee-list {
-    width: 200px;
+    width: 0;
     padding: 20px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    background-color: rgba(211, 211, 211, 0.40);
+    flex-grow: 1;
+    margin-top: 70px;
+    padding-top: 80px;
 }
 .employee-list a {
     display: block;
@@ -82,13 +87,17 @@ body {
     background-color: #ddd;
 }
 .content {
-    flex: 1;
-    padding: 20px;
     box-sizing: border-box;
+    margin-left: 220px;
+    padding: 80px 20px 20px 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 70px; /* Adjusted to account for header height */
 }
 .form-container {
     width: 100%;
-    max-width: 900px;
 }
 .form-container input[type="date"] {
     padding: 5px;
@@ -111,7 +120,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #FFF7E5;
+    /*background-color: #FFF7E5;*/
 }
 table, th, td {
     border: 1px solid #ddd;
@@ -132,5 +141,22 @@ th {
     .main-content {
         flex-direction: column;
         margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        background-color: #2277bb;
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row;
+        justify-content: space-around;
+        top: 0;
+    }
+    .content {
+        margin-left: 0;
+        padding: 10px;
+        margin-top: 120px;
     }
 }
