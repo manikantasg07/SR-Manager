@@ -52,7 +52,6 @@
     <p><b>No Reports</b></p>
     {% endif %}
 </div>
-{% endblock %}
 <script>
     const date=new Date()
     const dd=String(date.getDate()).padStart(2,"0")
@@ -61,3 +60,4 @@
     const dateElement = document.getElementById("date")
     dateElement.setAttribute("max",yyyy+"-"+mm+"-"+dd)
 </script>
+{% endblock %}
