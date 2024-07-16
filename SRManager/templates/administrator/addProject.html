@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block main %}
+<h3>ADD PROJECT</h3>
+<form class="form-container" action="/addProject/" enctype="multipart/form-data" method="post" style="max-width: 600px">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="tasks">Project Name:</label>
+        <div class="form-group-tasks">
+            <input type="text" id="project" rows="2" name="name" required></input>
+        </div>
+    </div>
+    <button type="submit">Finalize & Submit</button>
+</form>
+<script>
+    window.onload=function onloading(){
+        if (`{{success}}`){
+            alert(`{{success}}`)
+        }
+    }
+</script>
+{% endblock %}
+

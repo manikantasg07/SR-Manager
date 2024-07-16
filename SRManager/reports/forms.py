@@ -1,9 +1,17 @@
-from .models import Managers,Tasks,CustomUser,Projectteams
+from .models import Managers,Tasks,CustomUser,Projectteams,Projects
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 
 class Taskform(forms.ModelForm):
     class Meta:
         model=Tasks
+        fields="__all__"
+
+class Projectform(forms.ModelForm):
+    class Meta:
+        model=Projects
         fields="__all__"
 
 class Managerform(forms.ModelForm):
@@ -18,7 +26,7 @@ class Memberform(forms.ModelForm):
         model=Projectteams
         fields="__all__"
 
-class Userform(forms.ModelForm):
+class Userform(UserCreationForm):
     class Meta:
         model=CustomUser
-        fields=["username",'email', 'first_name', 'last_name',"role"]
+        fields=["first_name","last_name","username",'email',"password1","password2","role"]

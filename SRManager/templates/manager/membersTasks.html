@@ -37,13 +37,14 @@
         </div>
 
         <div class="content container d-flex justify-content-center align-items-center" style="margin-left: 0; ">
-            <div class="form-container">
-                <h3 style="text-align: center">Project :
-                    {% for key,value in projects.items %}
-                    <b>{{value}}</b>
-                    {% endfor %}</h3>
+            <div class="form-container">                    
                     <form id="form" action="{{request.path}}" method="post" enctype="multipart/form-data" >
                         {% csrf_token %}
+                        <select name="project" id="project">
+                            {% for key,value in projects.items %}
+                            <option value="{{key}}">{{value}}</option>
+                            {% endfor %}
+                        </select>
                         <input type="date" name="date" >
                         <button type="submit">Apply Filter</button>
                     </form>

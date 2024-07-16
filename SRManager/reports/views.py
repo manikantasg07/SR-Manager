@@ -1,12 +1,13 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login,logout
 from .models import Tasks,Managers,Projectteams,Projects,CustomUser
-from .forms import Taskform
+from .forms import Taskform,Userform,Projectform,Memberform
 from django.http import HttpResponse
 from django.db.models import Q
 from datetime import datetime, date
+import json
 # Create your views here.
 
 def teamMembers(request,project):
@@ -49,7 +50,9 @@ def loginUser(request):
         form=AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request,form.get_user())
-            if(request.user.role=="SA"):
+            if request.user.is_superuser:
+                return redirect("/addUser/")
+            elif(request.user.role=="SA"):
                 employees=allUsers()
                 projects=projectsList()
                 request.session["employees"]=employees
@@ -65,7 +68,9 @@ def loginUser(request):
             error=form.errors
             return render(request,"login.html",{"error":error})
     if request.user.is_authenticated:
-        if request.user.role=="SA":
+        if request.user.is_superuser:
+            return redirect("/addUser/")
+        elif request.user.role=="SA":
             return redirect("/executive/")
         return redirect("/viewTasks")
     return render(request,"login.html")
@@ -135,6 +140,18 @@ def viewTasks(request):
             tasks=list(Tasks.objects.filter(user=request.user.id,).select_related("project"))
         return render(request,"manager/viewTasks.html",{"tasks":tasks,"projects":request.session["projects"],"members":request.session["members"]})
     
+@login_required(login_url="/login/")
+def viewSpeficTask(request,taskId):
+    tasks=Tasks.objects.filter(id=taskId).select_related("project")
+    data={}
+    for task in tasks:
+        data["project"] = task.project.name
+        data["date"]=task.date.strftime('%m/%d/%Y')
+        data["taskDescription"]=task.taskDescription
+        data["accomplishments"]=task.accomplishments
+        data["blockers"]=task.blockers
+    return HttpResponse(json.dumps(data))
+
 @login_required(login_url="/login")
 def memebersTasks(request):
     if request.user.role=="PM":
@@ -209,6 +226,39 @@ def executiveMemberTasks(request,userid):
         return render(request,"executive/viewTasks.html",{"employees":request.session["employees"],"tasks":tasks,"projects":request.session["projects"]})
     else:
         return redirect("/viewTasks/")
+    
+@login_required(login_url="/login/")
+def addUser(request):
+    if request.user.is_superuser:
+        if request.method=="POST":
+            form=Userform(request.POST)
+            if form.is_valid():
+                form.save()
+                return render(request,"administrator/addUser.html",{"success":"User has been succesfully created"})
+            else:
+                print(form.errors.as_text())
+                return render(request,"administrator/addUser.html",{"errors":form.errors})
+        return render(request,"administrator/addUser.html")
+    else:
+        return HttpResponse("No permission to access")
+
+
+@login_required(login_url="/login/")
+def addProject(request):
+    if request.user.is_superuser:
+        if request.method=="POST":
+            form=Projectform(request.POST)
+            if form.is_valid():
+                form.save()
+                return render(request,"administrator/addProject.html",{"success":"Project has been succesfully created"})
+            else:
+                print(form.errors)
+                return render(request,"administrator/addProject.html",{"errors":form.errors})
+        return render(request,"administrator/addProject.html")
+    else:
+        return HttpResponse("No permission to access")
+    
+
 
 @login_required(login_url="/login")
 def logoutUser(request):
