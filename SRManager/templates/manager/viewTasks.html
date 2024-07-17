@@ -32,7 +32,7 @@
                 <th>Task Description</th>
                 <th>Accomplishments</th>
                 <th>Concerns/Blockers</th>
-                <th>Files</th>
+                <th>View</th>
             </tr>
         </thead>
         <tbody>
@@ -40,10 +40,10 @@
             <tr>
                 <td>{{task.project.name}}</td>
                 <td>{{task.date}}</td>
-                <td>{{task.taskDescription}}</td>
-                <td>{{task.accomplishments}}</td>
-                <td>{{task.blockers}}</td>
-                <td><a href="/files/{{task.document}}">{{task.document}}</a></td>
+                <td>{{task.taskDescription| truncatewords:5}}</td>
+                <td>{{task.accomplishments| truncatewords:5}}</td>
+                <td>{{task.blockers| truncatewords:5}}</td>
+                <td><button onclick="onclicking(event,{{task.id}})"><i class="fa fa-eye" style="font-size:24px"></i></button></td>
             </tr>
             {%endfor%}
         </tbody>
@@ -52,6 +52,8 @@
     <p><b>No Reports</b></p>
     {% endif %}
 </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const date=new Date()
     const dd=String(date.getDate()).padStart(2,"0")
@@ -59,5 +61,29 @@
     const yyyy=String(date.getFullYear())
     const dateElement = document.getElementById("date")
     dateElement.setAttribute("max",yyyy+"-"+mm+"-"+dd)
+    async function onclicking(event,taskId){
+        try{
+            event.preventDefault()
+            let response = await axios.get(`/viewTasks/${taskId}`)
+            taskelement = document.getElementById("myTask")
+            taskelement.innerHTML=`
+                <h4>Project :</h4>
+                <p>${response["data"]["project"]}</p>
+                <br>
+                <h4>Report Description</h4>
+                <p>${response["data"]["taskDescription"]}</p>
+                <br>
+                <h4>Accomplishments</h4>
+                <p>${response["data"]["accomplishments"]}</p>
+                <br>
+                <h4>Concerns/Blockers</h4>
+                <p>${response["data"]["blockers"]}</p>
+                <br>
+            `
+            $(`#exampleModalLong`).modal(`show`)
+        }catch(error){
+            console.log(error)
+        }
+    }
 </script>
 {% endblock %}
