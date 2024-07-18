@@ -32,7 +32,7 @@ class Tasks(models.Model):
     taskDescription = models.TextField(default="Custom Description")
     accomplishments=models.TextField(blank=True)
     blockers=models.TextField(blank=True)
-    document=models.FileField(blank=True)
+    documents=models.TextField(blank=True,default="")
     status = models.CharField(max_length=10, choices=STATUS, default="start")
 
 class Managers(models.Model):

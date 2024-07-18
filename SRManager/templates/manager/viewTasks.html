@@ -66,6 +66,34 @@
             event.preventDefault()
             let response = await axios.get(`/viewTasks/${taskId}`)
             taskelement = document.getElementById("myTask")
+
+            var documents = response["data"]["documents"];
+
+            var document_rows ="No Documents";
+
+            if(documents!=="")
+            {
+                document_rows = `<table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Document Name</th>
+                        <th>view</th>
+                    </tr>
+                </thead>
+                <tbody id="documentTableBody">
+`;
+                documents.split(",").forEach(function(doc) {
+                        document_rows+=`<tr>
+                        <td>${doc}</td>
+                        <td><a  href="/files/${doc}" ><img  align="center" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABp0lEQVR4nO3XT4iOURTH8c9gQaIslLBSSNlNUqKYLCgp5c/CQkqyEGNrw4akycLaYiwsWLFShA1KPcooFuyshDKNZPwpuvVbvE29Gs99X1Hvr2493c59vueec57nnss/pHUYbjlW1oAb/Gw5JrGxBny0xbqy5gc+YsPfBjc433bnTSW46FwbeNMDcCt4UwF+OaPKb/9JzpsKcLdqf9JP8GxT0FUDcK0Goe6qQXH9t8W1C4/7CV6GUdzAQ9zCGazB4n6AF+IipvEMF3AcZ/EgzcE1LO8leG1OpBcYwTY8whQmcBjrcRfvsL0X4PLCt7iO+YF+TQeyFSdzHp/CUMJeorK7Blzy9h6X81LZaYGuwFjO4734hHmxORLndrYF38dTzOmYm8pOx3IG30tRlefVHXZX4nQr8Eg8P9YxN5HwDsexfdiCb1gQm834HLtWYMnVdHI3lEKaTHgXBfoq6SjaE+hpFQ19aWWWYEdgN3OLGE1Oi833QJcm/CVCJ7pBi2Z7hSk/jKJVuIMvGMdBHMIBXMIHPMem30FrVD6nq3gdJ94kEvsxd6b1L6n2pHgmagtpAAAAAElFTkSuQmCC"></a></td>
+                    </tr>`;
+                    });
+
+                document_rows+=`
+                </tbody>
+            </table>`;
+            }
+
             taskelement.innerHTML=`
                 <h4>Project :</h4>
                 <p>${response["data"]["project"]}</p>
@@ -79,7 +107,8 @@
                 <h4>Concerns/Blockers</h4>
                 <p>${response["data"]["blockers"]}</p>
                 <br>
-            `
+                <h4>Documents</h4>
+            `+document_rows
             $(`#exampleModalLong`).modal(`show`)
         }catch(error){
             console.log(error)

@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from datetime import datetime, date
 import json
+from django.core.files.storage import FileSystemStorage
 # Create your views here.
 
 def teamMembers(request,project):
@@ -75,6 +76,24 @@ def loginUser(request):
         return redirect("/viewTasks")
     return render(request,"login.html")
 
+def save_files(request):
+    try:
+        file_names=""
+        files = request.FILES.getlist('document')
+        file_paths = []
+
+        for file in files:
+            fs = FileSystemStorage()
+            filename = fs.save(file.name, file)
+            file_paths.append(filename)
+
+        if file_paths:
+            file_names += ','.join(file_paths)
+
+        return file_names
+    except:
+        return ""
+
 @login_required(login_url="/login")
 def createtask(request):
     try:
@@ -88,7 +107,9 @@ def createtask(request):
             if request.method=="POST":
                 form=Taskform(request.POST,request.FILES)
                 if form.is_valid():
-                    form.save()
+                    task = form.save(commit=False)
+                    task.documents = save_files(request)
+                    task.save()
                     return redirect("/viewTasks/")
                 else:
                     return render(request,"members/createTask.html",{"projects":request.session["projects"],"errors":form.errors})
@@ -98,7 +119,9 @@ def createtask(request):
             if request.method=="POST":
                 form=Taskform(request.POST,request.FILES)
                 if form.is_valid():
-                    form.save()
+                    task = form.save(commit=False)
+                    task.documents = save_files(request)
+                    task.save()
                     return redirect("/viewTasks/")
                 else:
                     return render(request,"manager/createTask.html",{"project":list(request.session["projects"].keys())[0],"errors":form.errors})
@@ -138,6 +161,7 @@ def viewTasks(request):
                 tasks=list(Tasks.objects.filter(user=request.user.id).select_related("project"))
         else:
             tasks=list(Tasks.objects.filter(user=request.user.id,).select_related("project"))
+
         return render(request,"manager/viewTasks.html",{"tasks":tasks,"projects":request.session["projects"],"members":request.session["members"]})
     
 @login_required(login_url="/login/")
@@ -150,6 +174,7 @@ def viewSpeficTask(request,taskId):
         data["taskDescription"]=task.taskDescription
         data["accomplishments"]=task.accomplishments
         data["blockers"]=task.blockers
+        data["documents"]=task.documents
     return HttpResponse(json.dumps(data))
 
 @login_required(login_url="/login")
