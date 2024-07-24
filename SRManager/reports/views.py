@@ -52,7 +52,7 @@ def loginUser(request):
         if form.is_valid():
             login(request,form.get_user())
             if request.user.is_superuser:
-                return redirect("/addUser/")
+                return redirect("/users/")
             elif(request.user.role=="SA"):
                 employees=allUsers()
                 projects=projectsList()
@@ -253,6 +253,11 @@ def executiveMemberTasks(request,userid):
         return redirect("/viewTasks/")
     
 @login_required(login_url="/login/")
+def employees(request):
+    users=list(CustomUser.objects.all())
+    return render(request,"administrator/employees.html",{"users":users})
+    
+@login_required(login_url="/login/")
 def addUser(request):
     if request.user.is_superuser:
         if request.method=="POST":
@@ -266,6 +271,17 @@ def addUser(request):
         return render(request,"administrator/addUser.html")
     else:
         return HttpResponse("No permission to access")
+    
+@login_required(login_url="/login/")
+def deleteUser(request,userId):
+    try:
+        CustomUser.objects.filter(id=userId).delete()
+        return HttpResponse("User successfully Deleted")
+    except:
+        response=HttpResponse()
+        response.status_code=400
+        response.reason_phrase="No user with that id"
+        return response
 
 
 @login_required(login_url="/login/")

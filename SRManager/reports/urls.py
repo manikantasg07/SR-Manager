@@ -9,7 +9,9 @@ urlpatterns = [
     path("viewMemberTasks/<int:userid>/",views.memberTasks,name="memberTasks"),
     path("executive/",views.executive,name="executive"),
     path("executiveMemberTasks/<int:userid>/",views.executiveMemberTasks,name="executiveMemberTasks"),
+    path("users/",views.employees,name="user"),
     path("addUser/",views.addUser,name="addUser"),
-    path("addProject/",views.addProject,name="addUser"),
+    path("deleteUser/<int:userId>",views.deleteUser,name="deleteUser"),
+    path("addProject/",views.addProject,name="addProject"),
     path("logout/",views.logoutUser,name="logout")
 ]
