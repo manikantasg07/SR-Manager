@@ -1,28 +1,11 @@
 {% extends "layout.html" %}
 {% block main %}
     <div class="form-container">
-        <h3>Employees</h3>
-        <!-- <form id="form" action="/viewTasks/" method="post" enctype="multipart/form-data">
         <div class="form-group-inline">
-            {% csrf_token %}
-            <div class="form-item">
-                <label for="project">Project:</label>
-                <select name="project" class="project">
-                    <option value="">Select a Project</option>
-                    {% for key, value in projects.items %}
-                        <option value="{{ key }}">{{ value }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-item">
-                <label for="date">Date:</label>
-                <input type="date" id="date" name="date" >
-            </div>
-            <div class="form-item button-item">
-                <button type="submit">Apply Filter</button>
-            </div>
-    </div>
-    </form> -->
+            <h3>Employees</h3>
+            <a href="/addUser/" style="border:2px solid;border-color:black;padding:3px"><b>Add User</b></a>
+        </div>
+       
         {% if users %}
             <table>
                 <thead>
@@ -35,6 +18,7 @@
                 </thead>
                 <tbody>
                 {% for user in users %}
+                {% if not user.is_superuser %}
                     <tr>
                         <td>{{ user.id }}</td>
                         <td>{{ user.first_name }} {{ user.last_name }}</td>
@@ -53,6 +37,7 @@
                                                                                  style="font-size:24px;"></i></button>
                         </td>
                     </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
@@ -63,10 +48,10 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function deleteUser(event, userId) {
+        function deleteUser(event, userId,firstName,lastName) {
             deleteUserElement = document.getElementById("deleteUser")
             deleteUserElement.innerHTML = `
-         <p>Are you sure you want to delete the User</p>
+         <p>Are you sure you want to delete the user</p>
         `
             $(`#deleteModal`).modal(`show`)
             document.getElementById("yes").addEventListener("click", async function () {

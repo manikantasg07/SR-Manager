@@ -264,9 +264,8 @@ def addUser(request):
             form=Userform(request.POST)
             if form.is_valid():
                 form.save()
-                return render(request,"administrator/addUser.html",{"success":"User has been succesfully created"})
+                return redirect("/users/")
             else:
-                print(form.errors.as_text())
                 return render(request,"administrator/addUser.html",{"errors":form.errors})
         return render(request,"administrator/addUser.html")
     else:
