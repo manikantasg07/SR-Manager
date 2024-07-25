@@ -298,8 +298,17 @@ def addProject(request):
         return render(request,"administrator/addProject.html")
     else:
         return HttpResponse("No permission to access")
-    
 
+@login_required(login_url="/login/")
+def viewSpeficUser(request,userId):
+    user=CustomUser.objects.get(id=userId)
+    data={}
+    print(user)
+    data["username"] = user.username
+    data["email"]=user.email
+    data["role"]=user.role
+    data["password"]=user.password
+    return HttpResponse(json.dumps(data))
 
 @login_required(login_url="/login")
 def logoutUser(request):

@@ -13,5 +13,6 @@ urlpatterns = [
     path("addUser/",views.addUser,name="addUser"),
     path("deleteUser/<int:userId>",views.deleteUser,name="deleteUser"),
     path("addProject/",views.addProject,name="addProject"),
-    path("logout/",views.logoutUser,name="logout")
+    path("logout/",views.logoutUser,name="logout"),
+    path("viewUser/<int:userId>/",views.viewSpeficUser,name="viewSpeficUser"),
 ]
