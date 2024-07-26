@@ -28,6 +28,7 @@ body {
   .header .logo {
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   
   .header .logo img {
@@ -43,12 +44,12 @@ body {
   .card-login{
     width: 500px;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     margin: auto; /*center the card*/
   }
   
   .card-header {
-    padding: 10px;
+    padding: 20px;
   }
   
   .card-body {

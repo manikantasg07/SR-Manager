@@ -1,11 +1,23 @@
 {% extends "layout.html" %}
 {% block main %}
+    <style>
+        #search {
+            background: url('https://img.icons8.com/ios/50/search--v1.png') no-repeat left/35px;
+            width: 50%;
+            font-size: 18px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 0;
+        }
+    </style>
     <div class="form-container">
         <div class="form-group-inline">
             <h3>Employees</h3>
+            <input type="text" id="search" onkeyup="myFunction()" placeholder="Search for ID/Names/Roles.."
+                   title="Type in a name">
             <a href="/addUser/" style="border:2px solid;border-color:black;padding:3px"><b>Add User</b></a>
         </div>
-       
+
         {% if users %}
             <table>
                 <thead>
@@ -16,27 +28,35 @@
                     <th>Functions</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="emp_table">
                 {% for user in users %}
-                {% if not user.is_superuser %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.first_name }} {{ user.last_name }}</td>
-                        {% if user.role == 'SA' %}
-                            <td>Sysem Administrator</td>
-                        {% elif user.role == 'PM' %}
-                            <td>Project Manager</td>
-                        {% else %}
-                            <td>Project Member</td>
-                        {% endif %}
-                        <td>
-                            <button onclick="onclicking(event,{{ user.id }})"><i class="fa fa-eye"
-                                                                                 style="font-size:24px"></i></button>
-                            <button style="background-color: red;margin-left: 3px;"
-                                    onclick="deleteUser(event,{{ user.id }})"><i class="fa fa-trash" aria-hidden="true"
-                                                                                 style="font-size:24px;"></i></button>
-                        </td>
-                    </tr>
+                    {% if not user.is_superuser %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            {% if user.role == 'SA' %}
+                                <td>Sysem Administrator</td>
+                            {% elif user.role == 'PM' %}
+                                <td>Project Manager</td>
+                            {% else %}
+                                <td>Project Member</td>
+                            {% endif %}
+                            <td style="display: flex;justify-content: center;align-items: center;">
+                                <button onclick="onclicking(event,{{ user.id }})"><i class="fa fa-eye"
+                                                                                     style="font-size:24px"></i>
+                                </button>
+                                <button style="background-color: red;margin-left: 3px;"
+                                        onclick="deleteUser(event,{{ user.id }})"><i class="fa fa-trash"
+                                                                                     aria-hidden="true"
+                                                                                     style="font-size:24px;"></i>
+                                </button>
+                                <button style="background-color: rgb(255,168,8);margin-left: 3px;"
+                                        onclick="editUser(event,{{ user.id }})"><i class="fa fa-edit"
+                                                                                   aria-hidden="true"
+                                                                                   style="font-size:24px;"></i>
+                                </button>
+                            </td>
+                        </tr>
                     {% endif %}
                 {% endfor %}
                 </tbody>
@@ -48,7 +68,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function deleteUser(event, userId,firstName,lastName) {
+        function deleteUser(event, userId, firstName, lastName) {
             deleteUserElement = document.getElementById("deleteUser")
             deleteUserElement.innerHTML = `
          <p>Are you sure you want to delete the user</p>
@@ -78,24 +98,114 @@
                 let response = await axios.get(`/viewUser/${userId}`);
                 taskelement = document.getElementById("myTask");
 
+                var manager_names = "", project_members = "";
+
+                if (response["data"]["manager_names"] !== "") {
+                    manager_names = `<h4>Managers : <b>${response["data"]["manager_names"]}</b></h4>
+                <br>
+                `
+                }
+
+                if (response["data"]["project_members"] !== "") {
+                    project_members = `<h4 style="word-wrap: break-word">Project Members : <b>${response["data"]["project_members"]}<b></h4>
+                <br>
+                `
+                }
+
+
                 taskelement.innerHTML = `
-                <h4>User Name :</h4>
-                <p>${response["data"]["username"]}</p>
+                <h4>First Name : <b>${response["data"]["first_name"]}</b></h4>
                 <br>
-                <h4>Email</h4>
-                <p>${response["data"]["email"]}</p>
+                <h4>Last Name : <b>${response["data"]["last_name"]}</b></h4>
                 <br>
-                <h4>Role</h4>
-                <p>${response["data"]["role"]}</p>
+                <h4>User Name : <b>${response["data"]["username"]}</b></h4>
                 <br>
-                <h4>Password</h4>
-                <p style="overflow-x: scroll">${response["data"]["password"]}...</p>
+                <h4>Email : <b>${response["data"]["email"]}</b></h4>
                 <br>
-            `
+                <h4>Role : <b>${response["data"]["role"]}</b></h4>
+                <br>
+                <h4>Password : <b>${response["data"]["password"].slice(20, 40)}</b></h4>
+                <br>
+                <h4 style="word-wrap: break-word">Projects : <b>${response["data"]["projects"]}</b></h4>
+                <br>
+            ` + manager_names + project_members
                 $(`#exampleModalLong`).modal(`show`)
             } catch (error) {
                 console.log(error)
             }
         }
+    </script>
+    <script>
+        async function editUser(event, userId) {
+            try {
+                event.preventDefault();
+                $("#submit").show();
+                $("#modal_heading").html("Update Details");
+                let response = await axios.get(`/viewUser/${userId}`);
+                taskelement = document.getElementById("myTask");
+
+                taskelement.innerHTML = `<form id="update" class="form-container" action="/editUser/" enctype="multipart/form-data" method="post" style="max-width: 600px">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <input type="hidden" name="id" id="id" value="">
+                <div class="form-group">
+                    <label for="tasks">First Name:</label>
+                    <div class="form-group-tasks">
+                        <input type="text" value="${response["data"]["first_name"]}" rows="2" name="first_name" required></input>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tasks">Last Name:</label>
+                    <div class="form-group-tasks">
+                        <input type="text" value="${response["data"]["last_name"]}" rows="2" name="last_name" required></input>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tasks">Username</label>
+                    <div class="form-group-tasks">
+                        <input type="text" rows="2" name="username" value="${response["data"]["username"]}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tasks">Email</label>
+                    <div class="form-group-tasks">
+                        <input type="email" rows="2" name="email" value="${response["data"]["email"]}"required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tasks">Password</label>
+                    <div class="form-group-tasks">
+                        <input type="password" rows="2" name="password" value="${response["data"]["password"]}" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select id="role" name="role" required>
+                        <option value="PM">Project Manager</option>
+                        <option value="ME">Project Member</option>
+                        <option value="SA">Executive</option>
+                    </select>
+                </div>
+            </form>`;
+                $(`#exampleModalLong`).modal(`show`);
+                document.getElementById('role').value = response.data.role_value;
+                document.getElementById('id').value = userId;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#search").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#emp_table tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $("#submit").on('click',function ()
+            {
+                $("#update").submit();
+            });
+        });
     </script>
 {% endblock %}

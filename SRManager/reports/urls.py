@@ -15,4 +15,5 @@ urlpatterns = [
     path("addProject/",views.addProject,name="addProject"),
     path("logout/",views.logoutUser,name="logout"),
     path("viewUser/<int:userId>/",views.viewSpeficUser,name="viewSpeficUser"),
+    path("editUser/",views.editUser,name="editUser"),
 ]
