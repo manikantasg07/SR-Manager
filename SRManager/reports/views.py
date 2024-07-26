@@ -9,7 +9,7 @@ from django.db.models import Q
 from datetime import datetime, date
 import json
 from django.core.files.storage import FileSystemStorage
-
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -142,6 +142,13 @@ def createtask(request):
 
 @login_required(login_url="/login")
 def viewTasks(request):
+    errors=""
+    try:
+        errors = request.session["error"]
+        print(errors)
+        del request.session["error"]
+    except:
+        pass
     if request.user.role == "ME":
         if request.method == "POST":
             date = request.POST["date"]
@@ -157,7 +164,7 @@ def viewTasks(request):
                 tasks = list(Tasks.objects.filter(user=request.user.id).select_related("project"))
         else:
             tasks = list(Tasks.objects.filter(user=request.user.id).select_related("project"))
-        return render(request, "members/viewTasks.html", {"tasks": tasks, "projects": request.session["projects"]})
+        return render(request, "members/viewTasks.html", {"tasks": tasks, "projects": request.session["projects"],"errors":errors})
     else:
         if request.method == "POST":
             date = request.POST["date"]
@@ -175,7 +182,7 @@ def viewTasks(request):
             tasks = list(Tasks.objects.filter(user=request.user.id, ).select_related("project"))
 
         return render(request, "manager/viewTasks.html",
-                      {"tasks": tasks, "projects": request.session["projects"], "members": request.session["members"]})
+                      {"tasks": tasks, "projects": request.session["projects"], "members": request.session["members"],"errors":errors})
 
 
 @login_required(login_url="/login/")
@@ -189,6 +196,7 @@ def viewSpeficTask(request, taskId):
         data["accomplishments"] = task.accomplishments
         data["blockers"] = task.blockers
         data["documents"] = task.documents
+        data["status"] = task.status
     return HttpResponse(json.dumps(data))
 
 
@@ -394,6 +402,36 @@ def editUser(request):
             users = list(CustomUser.objects.all())
             return render(request, "administrator/employees.html",
                           {"users": users, "errors": errors})
+
+    else:
+        return HttpResponse("Wrong Request..")
+
+
+@login_required(login_url="/login/")
+def editTask(request):
+    if request.method == "POST":
+        errors=""
+        try:
+
+            task = Tasks.objects.get(id=request.POST['taskid'])
+            if task.user.id != request.user.id:
+                raise Exception("Not Authorized")
+
+            project = get_object_or_404(Projects, name=request.POST['project'])
+
+            task.taskDescription = request.POST['taskDescription']
+            task.accomplishments = request.POST['accomplishments']
+            task.blockers = request.POST['blockers']
+            task.project = project
+            task.status = request.POST['status']
+            task.save()
+
+            errors = "Task details updated Successfully..!"
+        except Exception as e:
+            errors = e.__str__()
+        finally:
+            request.session["error"]=errors
+            return redirect('/viewTasks/')
 
     else:
         return HttpResponse("Wrong Request..")

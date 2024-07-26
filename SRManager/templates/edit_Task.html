@@ -1,0 +1,63 @@
+{% load poll_extras %}
+{% if task.date|is_today %}
+    <button style="background-color: rgb(255,168,8);margin-left: 3px;"
+            onclick="editTask(event,{{ task.id }})"><i class="fa fa-edit"
+                                                       style="font-size:24px"></i></button>
+{% else %}
+    <button style="background-color: rgba(255,168,8,0.5);margin-left: 3px;" disabled><i
+            class="fa fa-edit"
+            style="font-size:24px"></i></button>
+{% endif %}
+<script>
+    async function editTask(event, taskId) {
+        try {
+            event.preventDefault()
+            $("#submit").show();
+            $("#modal_heading").html("Update Details");
+            let response = await axios.get(`/viewTasks/${taskId}`)
+            taskelement = document.getElementById("myTask")
+
+            taskelement.innerHTML = `
+                                        <form class="form-container" id="update" action="/editTask/" enctype="multipart/form-data" method="post" style="max-width: 600px">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="taskid" value="${taskId}">
+                                        <div class="form-group">
+                                            <label for="project-name">Project Name:</label>
+                                            <select id="project-name" name="project" required>
+                                                {% for key, value in projects.items %}
+                                                    <option value="{{ value }}">{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="date">Status:</label>
+                                            <select id="status" name="status" class="txt2" required>
+                                            <option value="completed">Completed</option>
+                                            <option value="progress">In Progress</option>
+                                            <option value="start">Yet-To-Start</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tasks">Tasks:</label>
+                                            <div class="form-group-tasks">
+                                                <textarea id="tasks" rows="4" name="taskDescription" required>${response["data"]["taskDescription"]}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="accomplishments">Accomplishments:</label>
+                                            <textarea id="accomplishments" rows="4" name="accomplishments" requried>${response["data"]["accomplishments"]}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="blockers">Blockers:</label>
+                                            <textarea id="blockers" rows="4" name="blockers">${response["data"]["blockers"]}</textarea>
+                                        </div>
+                                    </form>
+                                    `
+            $(`#exampleModalLong`).modal(`show`);
+            document.getElementById('status').value = response.data.status;
+            document.getElementById('project-name').value = response.data.project;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+</script>

@@ -43,7 +43,9 @@
                 <td>{{task.taskDescription| truncatewords:5}}</td>
                 <td>{{task.accomplishments| truncatewords:5}}</td>
                 <td>{{task.blockers| truncatewords:5}}</td>
-                <td><button onclick="onclicking(event,{{task.id}})"><i class="fa fa-eye" style="font-size:24px"></i></button></td>
+                <td><button onclick="onclicking(event,{{task.id}})"><i class="fa fa-eye" style="font-size:24px"></i></button>
+                    {% include "edit_Task.html" %}
+                </td>
             </tr>
             {%endfor%}
         </tbody>
@@ -54,6 +56,13 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        $("#submit").on('click', function () {
+            $("#update").submit();
+        });
+    });
+    </script>
 <script>
     const date=new Date()
     const dd=String(date.getDate()).padStart(2,"0")

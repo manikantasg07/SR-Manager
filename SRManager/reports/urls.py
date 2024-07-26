@@ -16,4 +16,5 @@ urlpatterns = [
     path("logout/",views.logoutUser,name="logout"),
     path("viewUser/<int:userId>/",views.viewSpeficUser,name="viewSpeficUser"),
     path("editUser/",views.editUser,name="editUser"),
+    path("editTask/",views.editTask,name="editTask"),
 ]
