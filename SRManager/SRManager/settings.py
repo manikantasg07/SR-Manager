@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-r2vx^9h^)kfj81@2%($ylz1wm)xlnx7(xfwl&-jw$*3z4in(a1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -121,6 +121,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS=[
     os.path.join(BASE_DIR,"static")
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR,"static")
 
 AUTH_USER_MODEL="reports.CustomUser"
 
