@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from .models import Tasks, Managers, Projectteams, Projects, CustomUser
 from .forms import Taskform, Userform, Projectform, Memberform
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from datetime import datetime, date
 import json
@@ -443,3 +443,6 @@ def editTask(request):
 def logoutUser(request):
     logout(request)
     return redirect("/login/")
+
+def home(request):
+    return HttpResponseRedirect('login')
