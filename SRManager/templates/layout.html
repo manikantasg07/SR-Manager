@@ -31,10 +31,10 @@
             
             {% else %}
             <a href="/viewTasks/">View</a>  
-            <a href="/createTask/">Create</a> 
-            {% if request.user.role == "PM" %}
-            <a href="/viewMembersTasks/">Project Reports</a>
-            {% endif %}
+            <a href="/createTask/">Create</a>
+{#            {% if request.user.role == "PM" %}#}
+{#            <a href="/viewMembersTasks/">Project Reports</a>#}
+{#            {% endif %}#}
             {% endif %}
         </div>
         {% block listcontent%}
