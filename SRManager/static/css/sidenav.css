@@ -1,0 +1,121 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    margin-left: 300px !important;
+}
+
+/* Scrollbar-effect------- */
+#accordian::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+}
+
+#accordian::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+#accordian::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 10px;
+    transition: 0.5s;
+}
+
+#accordian {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: scroll;
+    color: white;
+    background-color: white;
+}
+
+#accordian a {
+}
+
+i {
+    margin-right: 10px;
+}
+
+#accordian li {
+    list-style-type: none;
+}
+
+#accordian ul li a {
+    color: #9c9c9c;
+    text-decoration: none;
+    font-size: 15px;
+    display: block;
+    /* 	line-height: 34px; */
+    padding: 12px 15px;
+    transition: all 0.15s;
+    position: relative;
+    border-radius: 3px;
+}
+
+#accordian > ul.show-dropdown > li.active > a,
+#accordian > ul > li > ul.show-dropdown > li.active > a,
+#accordian > ul > li > ul > li > ul.show-dropdown > li.active > a,
+#accordian > ul > li > ul > li > ul > li > ul.show-dropdown > li.active > a,
+#accordian
+> ul
+> li
+> ul
+> li
+> ul
+> li
+> ul
+> li
+> ul.show-dropdown
+> li.active
+> a {
+    background-color: rgba(221, 221, 221, 0.27);
+    color: #800000;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#accordian > ul > li > ul,
+#accordian > ul > li > ul > li > ul,
+#accordian > ul > li > ul > li > ul > li > ul,
+#accordian > ul > li > ul > li > ul > li > ul > li > ul {
+    display: none;
+}
+
+#accordian > ul > li.active > ul.show-dropdown,
+#accordian > ul > li > ul > li.active > ul.show-dropdown,
+#accordian > ul > li > ul > li > ul > li.active > ul.show-dropdown,
+#accordian > ul > li > ul > li > ul > li > ul > li.active > ul.show-dropdown {
+    display: block;
+}
+
+#accordian > ul > li > ul,
+#accordian > ul > li > ul > li > ul,
+#accordian > ul > li > ul > li > ul > li > ul,
+#accordian > ul > li > ul > li > ul > li > ul > li > ul {
+    padding-left: 20px;
+}
+
+#accordian a:not(:only-child):after {
+    content: "\f105";
+    position: absolute;
+    right: 20px;
+    top: 14px;
+    font-size: 15px;
+    font-family: "Font Awesome 5 Free";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+    font-weight: 900;
+    transition: 0.5s;
+}
+
+#accordian .active > a:not(:only-child):after {
+    transform: rotate(90deg);
+}

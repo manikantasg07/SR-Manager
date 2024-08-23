@@ -7,64 +7,99 @@
     <title>Status Report</title>
     <link rel="stylesheet" href="{% static "css/style2.css" %}">
     {% include 'css.html' %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="{% static "css/sidenav.css" %}">
 </head>
 <body>
-    <div class="header">
-        <div class="header-left">
-            <h2>{{request.user.first_name}} {{request.user.last_name}}</h2>
-        </div>
-        <div class="header-middle">
-            <h2>International Software Systems, Inc.<br>Status Report Manager</h2>
-        </div>
-        <div class="header-right">
-            <a href="/logout">Logout</a>
-        </div>
+<div class="header">
+    <div class="header-left">
+        <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
     </div>
-    
-    <div class="main-content">
-        <div class="sidebar"> 
-            <a href="/executive/">Projects Reports</a>
-        </div>
+    <div class="header-middle">
+        <h2>International Software Systems, Inc.<br>Status Report Manager</h2>
+    </div>
+    <div class="header-right">
+        <a href="/logout">Logout</a>
+    </div>
+</div>
 
-        <div class="employee-list">
-            <a href="/executive/">All Members</a>
-            {% for key,value in employees.items %}
-                <a href="/executiveMemberTasks/{{key}}/">{{value}}</a>
-            {% endfor %}
-        </div>
-        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Report</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body" id="myTask"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+<div class="main-content" style="margin-left: 0">
+    <div id="accordian" class="employee-list">
+        <ul class="show-dropdown">
+            <li>
+                <a href="/executive/"><i class="fa fa-address-book"></i>All Members</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);"><i class="fa fa-address-book"></i>ME Group</a>
+                <ul>
+                    {% for key,value in employees.items %}
+                        {% if value.1 == "ME" %}
+                            <li><a href="/executiveMemberTasks/{{ key }}/">{{ value.0 }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:void(0);"><i class="fa fa-address-book"></i>PM Group</a>
+                <ul>
+                    {% for key,value in employees.items %}
+                        {% if value.1 == "PM" %}
+                            <li><a href="/executiveMemberTasks/{{ key }}/">{{ value.0 }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:void(0);"><i class="fa fa-address-book"></i>SA Group</a>
+                <ul>
+                    {% for key,value in employees.items %}
+                        {% if value.1 == "SA" %}
+                        <li><a href="/executiveMemberTasks/{{ key }}/">{{ value.0 }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+    {#        <div class="employee-list">#}
+    {#            <a href="/executive/">All Members</a>#}
+    {#            {% for key,value in employees.items %}#}
+    {#                <a href="/executiveMemberTasks/{{key}}/">{{value}}</a>#}
+    {#            {% endfor %}#}
+    {#        </div>#}
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="myTask"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-        <div class="content" style="margin-left: 0;">
-            <div class="form-container">
-                    <form id="form" action="{{request.path}}" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <select name="project" id="project">
-                            <option value="">Select a Project</option>
-                            {% for key,value in projects.items %}
-                                <option value="{{key}}">{{value}}</option>
-                            {% endfor %}
-                        </select>
-                        <input type="date" name="date">
-                        <button type="submit">Apply Filter</button>
-                    </form>
-                {% if tasks %}
-                <table>
-                    <tr>
+    </div>
+    <div class="content" style="margin-left: 0;">
+        <div class="form-container">
+            <form id="form" action="{{ request.path }}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <select name="project" id="project" style="padding: 7px;border: 1px solid gray;border-radius: 5px;">
+                    <option value="">Select a Project</option>
+                    {% for key,value in projects.items %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="date">
+                <button type="submit">Apply Filter</button>
+            </form>
+            {% if tasks %}
+                <table class="table">
+                    <tr class="thead-dark">
                         <th>Employee</th>
                         <th>Date</th>
                         <th>Project</th>
@@ -73,53 +108,100 @@
                         <th>Concerns/Blockers</th>
                         <th>View</th>
                     </tr>
-                    {% for task in tasks%}
+                    {% for task in tasks %}
                         <tr>
-                            <td>{{task.user.first_name}} {{task.user.last_name}}</td>
-                            <td>{{task.date}}</td>
-                            <td>{{task.project.name}}</td>
-                            <td>{{task.taskDescription | truncatewords:5}}</td>
-                            <td>{{task.accomplishments | truncatewords:5}}</td>
-                            <td>{{task.blockers | truncatewords:5}}</td>
+                            <td>{{ task.user.first_name }} {{ task.user.last_name }}</td>
+                            <td>{{ task.date }}</td>
+                            <td>{{ task.project.name }}</td>
+                            <td>{{ task.taskDescription | truncatewords:5}}</td>
+                            <td>{{ task.accomplishments | truncatewords:5}}</td>
+                            <td>{{ task.blockers | truncatewords:5}}</td>
                             <td>
                                 <button onclick="onclicking(event, {{ task.id }})">
                                     <i class="fa fa-eye" style="font-size:24px"></i>
                                 </button>
                             </td>
-                            {% comment %} <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span class="glyphicon glyphicon-edit"></span> Edit</a> <a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Del</a></td> {% endcomment %}
+                            {% comment %}
+                                <td class="text-center"><a class='btn btn-info btn-xs' href="#"><span
+                                        class="glyphicon glyphicon-edit"></span> Edit</a> <a href="#"
+                                                                                             class="btn btn-danger btn-xs"><span
+                                        class="glyphicon glyphicon-remove"></span> Del</a></td> {% endcomment %}
                         </tr>
                     {% endfor %}
                 </table>
-                {%else%}
-                    <h4>No reports</h4>
-                {% endif %}
-            </div>
+            {% else %}
+                <h4>No reports</h4>
+            {% endif %}
         </div>
     </div>
-    {% include 'js.html' %}
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</div>
+{% include 'js.html' %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    // -------multilevel-accordian-menu---------
+    $(document).ready(function () {
+        $("#accordian a").click(function () {
+            var link = $(this);
+            var closest_ul = link.closest("ul");
+            var parallel_active_links = closest_ul.find(".active")
+            var closest_li = link.closest("li");
+            var link_status = closest_li.hasClass("active");
+            var count = 0;
 
+            closest_ul.find("ul").slideUp(function () {
+                if (++count == closest_ul.find("ul").length) {
+                    parallel_active_links.removeClass("active");
+                    parallel_active_links.children("ul").removeClass("show-dropdown");
+                }
+            });
+
+            if (!link_status) {
+                closest_li.children("ul").slideDown().addClass("show-dropdown");
+                closest_li.parent().parent("li.active").find('ul').find("li.active").removeClass("active");
+                link.parent().addClass("active");
+            }
+        })
+    });
+
+
+    // --------for-active-class-on-other-page-----------
+    jQuery(document).ready(function ($) {
+        // Get current path and find target link
+        var path = window.location.pathname.split("/").pop();
+
+        // Account for home page with empty path
+        if (path == '') {
+            path = 'index.html';
+        }
+
+        var target = $('#accordian li a[href="' + path + '"]');
+        // Add active class to target link
+        target.parents("li").addClass('active');
+        target.parents("ul").addClass("show-dropdown");
+    });
+
+</script>
 </body>
 </html>
 <script>
-    const date=new Date()
-    const dd=String(date.getDate()).padStart(2,"0")
-    const mm = String(date.getMonth()+1).padStart(2,"0")
-    const yyyy=String(date.getFullYear())
+    const date = new Date()
+    const dd = String(date.getDate()).padStart(2, "0")
+    const mm = String(date.getMonth() + 1).padStart(2, "0")
+    const yyyy = String(date.getFullYear())
     const dateElement = document.getElementById("date")
-    dateElement.setAttribute("max",yyyy+"-"+mm+"-"+dd)
-        async function onclicking(event,taskId){
-        try{
+    dateElement.setAttribute("max", yyyy + "-" + mm + "-" + dd)
+
+    async function onclicking(event, taskId) {
+        try {
             event.preventDefault()
             let response = await axios.get(`/viewTasks/${taskId}`)
             taskelement = document.getElementById("myTask")
 
             var documents = response["data"]["documents"];
 
-            var document_rows ="No Documents";
+            var document_rows = "No Documents";
 
-            if(documents!=="")
-            {
+            if (documents !== "") {
                 document_rows = `<table class="table table-bordered mt-3">
                 <thead>
                     <tr>
@@ -129,19 +211,19 @@
                 </thead>
                 <tbody id="documentTableBody">
 `;
-                documents.split(",").forEach(function(doc) {
-                        document_rows+=`<tr>
+                documents.split(",").forEach(function (doc) {
+                    document_rows += `<tr>
                         <td>${doc}</td>
                         <td><a  href="/files/${doc}" ><img  align="center" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABp0lEQVR4nO3XT4iOURTH8c9gQaIslLBSSNlNUqKYLCgp5c/CQkqyEGNrw4akycLaYiwsWLFShA1KPcooFuyshDKNZPwpuvVbvE29Gs99X1Hvr2493c59vueec57nnss/pHUYbjlW1oAb/Gw5JrGxBny0xbqy5gc+YsPfBjc433bnTSW46FwbeNMDcCt4UwF+OaPKb/9JzpsKcLdqf9JP8GxT0FUDcK0Goe6qQXH9t8W1C4/7CV6GUdzAQ9zCGazB4n6AF+IipvEMF3AcZ/EgzcE1LO8leG1OpBcYwTY8whQmcBjrcRfvsL0X4PLCt7iO+YF+TQeyFSdzHp/CUMJeorK7Blzy9h6X81LZaYGuwFjO4734hHmxORLndrYF38dTzOmYm8pOx3IG30tRlefVHXZX4nQr8Eg8P9YxN5HwDsexfdiCb1gQm834HLtWYMnVdHI3lEKaTHgXBfoq6SjaE+hpFQ19aWWWYEdgN3OLGE1Oi833QJcm/CVCJ7pBi2Z7hSk/jKJVuIMvGMdBHMIBXMIHPMem30FrVD6nq3gdJ94kEvsxd6b1L6n2pHgmagtpAAAAAElFTkSuQmCC"></a></td>
                     </tr>`;
-                    });
+                });
 
-                document_rows+=`
+                document_rows += `
                 </tbody>
             </table>`;
             }
 
-            taskelement.innerHTML=`
+            taskelement.innerHTML = `
                 <h4>Project :</h4>
                 <p>${response["data"]["project"]}</p>
                 <br>
@@ -155,9 +237,9 @@
                 <p>${response["data"]["blockers"]}</p>
                 <br>
                 <h4>Documents</h4>
-            `+document_rows
+            ` + document_rows
             $(`#exampleModalLong`).modal(`show`)
-        }catch(error){
+        } catch (error) {
             console.log(error)
         }
     }

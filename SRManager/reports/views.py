@@ -38,9 +38,9 @@ def projectsDict(request):
 
 def allUsers():
     employees = {}
-    employeesList = list(CustomUser.objects.filter(~Q(role="SA")))
+    employeesList = list(CustomUser.objects.filter())
     for employee in employeesList:
-        employees[employee.id] = employee.first_name + " " + employee.last_name
+        employees[employee.id] = [employee.first_name + " " + employee.last_name,employee.role]
     return employees
 
 
@@ -254,6 +254,7 @@ def executive(request):
                 tasks = list(Tasks.objects.filter().select_related("project"))
         else:
             tasks = Tasks.objects.all().select_related("project")
+        print(request.session["employees"])
         return render(request, "executive/viewTasks.html", {"employees": request.session["employees"], "tasks": tasks,
                                                             "projects": request.session["projects"]})
     else:
@@ -392,7 +393,8 @@ def editUser(request):
             user.last_name = request.POST['last_name']
             user.email = request.POST['email']
             user.role = request.POST['role']
-            user.set_password(request.POST['password'])
+            if request.POST['password']!=user.password:
+                user.set_password(request.POST['password'])
             user.save()
 
             errors = "User details updated Successfully..!"

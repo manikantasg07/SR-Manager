@@ -38,7 +38,7 @@ body {
     text-decoration: none;
 }
 .sidebar {
-    width: 200px;
+    width: 300px;
     padding: 80px 20px 20px 20px;
     background-color: #f4f4f4;
     position: fixed;
@@ -49,6 +49,7 @@ body {
     flex-direction: column;
     overflow-y: auto;
     box-sizing: border-box;
+    box-shadow: 5px 0 10px rgba(0, 0, 0, 0.5);
 }
 .sidebar a {
     display: block;

@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="form-container">
+    {% if users %}
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>email</th>
+                <th>Role</th>
+                <th>View</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.role}}</td>
+                <td><button onclick="onclicking(event,{{user.id}})"><i class="fa fa-eye" style="font-size:24px"></i></button></td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+    {% else %}
+    <p><b>No Reports</b></p>
+    {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const date=new Date()
+    const dd=String(date.getDate()).padStart(2,"0")
+    const mm = String(date.getMonth()+1).padStart(2,"0")
+    const yyyy=String(date.getFullYear())
+    const dateElement = document.getElementById("date")
+    dateElement.setAttribute("max",yyyy+"-"+mm+"-"+dd)
+        async function onclicking(event,userId){
+        try{
+            event.preventDefault();
+            let response = await axios.get(`/viewUser/${userId}`);
+            taskelement = document.getElementById("myTask");
+
+            taskelement.innerHTML=`
+                <h4>User Name :</h4>
+                <p>${response["data"]["username"]}</p>
+                <br>
+                <h4>Email</h4>
+                <p>${response["data"]["email"]}</p>
+                <br>
+                <h4>Role</h4>
+                <p>${response["data"]["role"]}</p>
+                <br>
+                <h4>Password</h4>
+                <p style="overflow-x: scroll">${response["data"]["password"]}...</p>
+                <br>
+            `
+            $(`#exampleModalLong`).modal(`show`)
+        }catch(error){
+            console.log(error)
+        }
+    }
+</script>
+{% endblock %}

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     {% include 'css.html' %}
+    <link rel="stylesheet" href="{% static "css/sidenav.css" %}">
 </head>
 <body>
     <div class="header">
@@ -26,7 +27,7 @@
         <div class="sidebar">
             {% if request.user.is_superuser %}
             <a href="/users/">Users</a> 
-            <a href="/addProject/">Add Project</a>
+            <a href="/addUser/">Add User</a>
             
             {% else %}
             <a href="/viewTasks/">View</a>  
